@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Button, Linking } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, Linking } from 'react-native';
 import axios from 'axios';
 
 const GitHubScreen = () => {
@@ -42,17 +42,33 @@ const GitHubScreen = () => {
         data={repos}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.repoContainer}>
-            <Text style={styles.repoName}>{item.name}</Text>
-            <Text style={styles.repoDescription}>{item.description}</Text>
-            <Button
-              title="Proje Koduna Git"
-              onPress={() => Linking.openURL(item.html_url)}
-              color="#758694"
-            />
-          </View>
+          <RepoCard item={item} />
         )}
       />
+    </View>
+  );
+};
+
+const RepoCard = ({ item }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <View style={styles.repoContainer}>
+      <Text style={styles.repoName}>{item.name}</Text>
+      <Text style={styles.repoDescription}>{item.description}</Text>
+      <TouchableOpacity
+        style={[
+          styles.repoButton,
+          isHovered && styles.repoButtonHover,
+        ]}
+        onPress={() => Linking.openURL(item.html_url)}
+        onPressIn={() => setIsHovered(true)}
+        onPressOut={() => setIsHovered(false)}
+      >
+        <Text style={[styles.repoButtonText, isHovered && styles.repoButtonTextHover]}>
+          Proje Koduna Git
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -86,6 +102,24 @@ const styles = StyleSheet.create({
   repoDescription: {
     fontSize: 14,
     color: '#666',
+    marginBottom: 10,
+  },
+  repoButton: {
+    backgroundColor: '#808080',
+    borderRadius: 6,
+    padding: 10,
+    alignItems: 'center',
+  },
+  repoButtonHover: {
+    backgroundColor: '#000000',
+  },
+  repoButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  repoButtonTextHover: {
+    color: '#FF8C42',
   },
   centered: {
     flex: 1,
